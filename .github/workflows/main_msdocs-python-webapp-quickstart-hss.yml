@@ -24,7 +24,8 @@ jobs:
           .\.venv\Scripts\activate  # Activate virtual environment on Windows
 
       - name: Install dependencies
-        run: .\.venv\Scripts\pip install -r requirements.txt  # Use correct pip path for Windows
+        run: .\.venv\Scripts\pip install -r msdocs-python-flask-webapp-quickstart/requirements.txt
+  # Use correct pip path for Windows
 
       # Optional: Add step to run tests here (PyTest, etc.)
 
