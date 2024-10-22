@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest   # Change to Windows runner since you're using Windows 11
+    runs-on: windows-latest   # Use Windows runner since you're using Windows 11
 
     steps:
       - uses: actions/checkout@v4
@@ -20,11 +20,11 @@ jobs:
 
       - name: Create and start virtual environment (Windows)
         run: |
-          python -m venv venv
-          .\venv\Scripts\activate   # Activate virtual environment for Windows
+          python -m venv .venv  # Ensure the venv is created with the .venv name
+          .\.venv\Scripts\activate  # Activate virtual environment on Windows
 
       - name: Install dependencies
-        run: .\venv\Scripts\pip install -r requirements.txt  # Use correct pip path for Windows
+        run: .\.venv\Scripts\pip install -r requirements.txt  # Use correct pip path for Windows
 
       # Optional: Add step to run tests here (PyTest, etc.)
 
