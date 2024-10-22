@@ -1,7 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
 name: Build and deploy Python app to Azure Web App - msdocs-python-webapp-quickstart-HSS
 
 on:
@@ -12,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest   # Change to Windows runner since you're using Windows 11
 
     steps:
       - uses: actions/checkout@v4
@@ -20,37 +16,35 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.12'  # Updated Python version
 
-      - name: Create and start virtual environment
+      - name: Create and start virtual environment (Windows)
         run: |
           python -m venv venv
-          source venv/bin/activate
-      
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+          .\venv\Scripts\activate   # Activate virtual environment for Windows
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      - name: Install dependencies
+        run: .\venv\Scripts\pip install -r requirements.txt  # Use correct pip path for Windows
+
+      # Optional: Add step to run tests here (PyTest, etc.)
+
+      - name: Zip artifact for deployment (Optional, remove if not needed)
+        run: tar -czvf release.zip ./*
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Ensure this matches your build job runner
     needs: build
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write  # Required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -59,9 +53,8 @@ jobs:
           name: python-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: tar -xvf release.zip   # Windows can handle tar/gzip now in GitHub runners
 
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -75,4 +68,3 @@ jobs:
         with:
           app-name: 'msdocs-python-webapp-quickstart-HSS'
           slot-name: 'Production'
-          
